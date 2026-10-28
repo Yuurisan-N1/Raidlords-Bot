@@ -1,0 +1,29 @@
+[package]
+name = "raidlords-bot"
+version = "1.0.0"
+edition = "2021"
+license = "AGPL-3.0-or-later"
+description = "Automation client for the RaidLords village game"
+authors = ["Yuurisan <https://t.me/Y3YuYuYo>"]
+build = "build.rs"
+
+[[bin]]
+name = "raidlords-bot"
+path = "src/main.rs"
+
+[dependencies]
+boa_engine = "0.22"
+chrono = "0.4"
+k256 = { version = "0.13", features = ["ecdsa"] }
+reqwest = { version = "0.12", default-features = false, features = ["blocking", "json", "rustls-tls", "gzip", "brotli"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+sha2 = "0.10"
+sha3 = "0.10"
+
+[profile.release]
+opt-level = 3
+lto = "thin"
+codegen-units = 1
+panic = "abort"
+strip = true
