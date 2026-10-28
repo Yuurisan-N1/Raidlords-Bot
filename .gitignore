@@ -1,0 +1,13 @@
+/target
+/.env
+/session.json
+/device.json
+*.log
+*.zip
+src/net/client.rs
+src/raid/siege.rs
+src/run/plan.rs
+src/state/snapshot.rs
+src/support/consts/app.rs
+src/logika.rs
+src/support/consts/net.rs
