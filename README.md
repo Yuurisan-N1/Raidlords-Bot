@@ -8,7 +8,7 @@
   <img alt="rust" src="https://img.shields.io/badge/Rust-2021-f74c00?logo=rust&logoColor=white"/>
   <img alt="platform" src="https://img.shields.io/badge/Platform-Raidlords-111111"/>
   <img alt="wallet" src="https://img.shields.io/badge/Auth-EVM%20Wallet-111111"/>
-  <img alt="build" src="https://github.com/Yuurisan-N1/Raidlords-Bor/actions/workflows/build.yml/badge.svg"/>
+  <img alt="build" src="https://github.com/Yuurisan-N1/Raidlords-Bot/actions/workflows/build.yml/badge.svg"/>
   <img alt="author" src="https://img.shields.io/badge/by-Yuurisandesu-111111"/>
 </p>
 
@@ -93,8 +93,8 @@ source $HOME/.cargo/env
 **Clone the repository:**
 
 ```bash
-git clone https://github.com/Yuurisan-N1/Raidlords-Bor.git
-cd Raidlords-Bor
+git clone https://github.com/Yuurisan-N1/Raidlords-Bot.git
+cd Raidlords-Bot
 ```
 
 **Build the binary:**
@@ -278,7 +278,7 @@ make size       # show release binary size
 Prebuilt binaries are automatically compiled on every push to main via GitHub Actions across 3 platforms.
 
 Download the latest binaries from the Actions page:
-https://github.com/Yuurisan-N1/Raidlords-Bor/actions/workflows/build.yml
+https://github.com/Yuurisan-N1/Raidlords-Bot/actions/workflows/build.yml
 
 Open the latest successful run and scroll to the Artifacts section.
 
@@ -369,7 +369,7 @@ After each cycle completes, the bot displays a live `HH:MM:SS` countdown until t
 ## File Structure
 
 ```text
-Raidlords-Bor/
+Raidlords-Bot/
 ├── .github/
 │   └── workflows/
 │       └── build.yml                    # CI: 3-platform matrix build
