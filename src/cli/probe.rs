@@ -1,13 +1,13 @@
 use crate::logika::{Diam, Kondisi, Otak, Sumber};
 use crate::net::Api;
-use crate::run::cycle::{isi_sumber_publik, tarik_state, version_of};
+use crate::run::cycle::{isi_sumber_publik, tarik_state, versi_hidup};
 use crate::support::consts::app::{CYCLE_STEPS_MAX, DEFAULT_SLEEP_SECS, GAME_BUILD};
 use crate::support::error::Result;
 use crate::support::log;
 
 pub fn jalankan(api: &Api) -> Result<()> {
     let state = tarik_state(api)?;
-    let versi = version_of(&state);
+    let versi = versi_hidup(api);
     let mut otak = Otak::baru(Kondisi::new(state, &versi, GAME_BUILD));
 
     isi_sumber_publik(api, &mut otak);
