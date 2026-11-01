@@ -155,19 +155,31 @@ where
         log::ly(&format!("Using proxy {}", spec.masked()));
     }
 
-    let seed = crate::support::private_key()
-        .map(|hex| crate::wallet::Wallet::from_hex(&hex))
-        .transpose()?
-        .map(|wallet| wallet.address().to_string())
-        .unwrap_or_default();
+    let seed = match crate::support::private_key() {
+        Some(hex) => crate::wallet::Wallet::from_hex(&hex)?.address().to_string(),
+        None => crate::state::store::read()
+            .map(|cached| cached.wallet)
+            .unwrap_or_default(),
+    };
 
     let api = Api::new(spec, &seed)?;
-    masuk(&api, false)?;
 
-    let state = cycle::tarik_state(&api)?;
-    ringkas(&state)?;
+    match mulai(&api) {
+        Ok(state) => ringkas(&state)?,
+        Err(err) => {
+            if !cycle::pulih(&api, &err) {
+                return Err(err);
+            }
+            log::ly("The run goes on and the first cycle tries again");
+        }
+    }
 
     work(&api, &config)
+}
+
+fn mulai(api: &Api) -> Result<Snapshot> {
+    masuk(api, false)?;
+    cycle::tarik_state(api)
 }
 
 fn ringkas(state: &Snapshot) -> Result<()> {
