@@ -7,17 +7,18 @@ use crate::wallet::token::{self, Session};
 use crate::wallet::Wallet;
 
 pub fn masuk(api: &Api, paksa: bool) -> Result<Session> {
-    let hex = private_key().ok_or_else(|| {
-        Error::Cfg("fill .env with PRIVATEKEY=0x followed by 64 hex characters".to_string())
-    })?;
-
-    let wallet = Wallet::from_hex(&hex)?;
+    let wallet = match private_key() {
+        Some(hex) => Some(Wallet::from_hex(&hex)?),
+        None => None,
+    };
 
     if !paksa {
         if let Some(cached) = store::read() {
-            if cached.wallet.eq_ignore_ascii_case(wallet.address())
-                && token::valid(&cached.token, 600)
-            {
+            let same = match &wallet {
+                Some(wallet) => cached.wallet.eq_ignore_ascii_case(wallet.address()),
+                None => true,
+            };
+            if same && token::valid(&cached.token, 600) {
                 api.set_token(Some(cached.token.clone()));
                 log::ly("Cached session was reused for this account");
                 let session = Session {
@@ -29,6 +30,10 @@ pub fn masuk(api: &Api, paksa: bool) -> Result<Session> {
             }
         }
     }
+
+    let wallet = wallet.ok_or_else(|| {
+        Error::Cfg("fill .env with PRIVATEKEY=0x followed by 64 hex characters".to_string())
+    })?;
 
     log::ly(&format!(
         "Wallet {} is signing in",
