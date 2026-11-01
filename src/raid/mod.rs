@@ -4,5 +4,5 @@ pub mod revenge;
 pub mod siege;
 pub mod target;
 
-pub use finish::{battle_finish, raid_attack};
-pub use target::{battle_log, find_target};
+pub use finish::battle_finish;
+pub use target::{battle_log, find_target, next_target};
