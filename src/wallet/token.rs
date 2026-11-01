@@ -41,7 +41,7 @@ pub fn sign_in(api: &Api, wallet: &Wallet) -> Result<Session> {
         .ok_or_else(|| Error::Auth("the sign in reply carried no token".to_string()))?
         .to_string();
 
-    let player = reply.get("player").cloned().unwrap_or_else(|| Value::Null);
+    let player = reply.get("player").cloned().unwrap_or(Value::Null);
 
     if token.is_empty() {
         return Err(Error::Auth(
