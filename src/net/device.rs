@@ -29,7 +29,7 @@ const ANDROID: [(&str, &str, &str); 6] = [
     ("Android 14", "SM-S918B", "?1"),
     ("Android 14", "Pixel 8", "?1"),
     ("Android 13", "SM-A546E", "?1"),
-    ("Android 13", "23021RAAEG", "?1"),
+    ("Android 13", "SM-G991B", "?1"),
     ("Android 12", "CPH2451", "?1"),
     ("Android 14", "RMX3630", "?1"),
 ];
@@ -149,7 +149,7 @@ pub fn for_account(address: &str) -> Device {
     for_account_at(Path::new(DEVICE_FILE), address)
 }
 
-fn for_account_at(path: &Path, address: &str) -> Device {
+pub(crate) fn for_account_at(path: &Path, address: &str) -> Device {
     let mut devices = load(path);
     let key = key_of(address);
 
