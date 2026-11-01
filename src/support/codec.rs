@@ -14,7 +14,7 @@ pub fn hex_decode(text: &str) -> Option<Vec<u8>> {
         .strip_prefix("0x")
         .or_else(|| body.strip_prefix("0X"))
         .unwrap_or(body);
-    if body.len() % 2 != 0 {
+    if !body.len().is_multiple_of(2) {
         return None;
     }
     let bytes = body.as_bytes();

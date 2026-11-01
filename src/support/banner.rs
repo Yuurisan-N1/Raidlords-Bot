@@ -12,7 +12,7 @@ pub fn print_banner() {
 
     println!("\x1b[1;36m{}\x1b[0m", ascii);
     println!();
-    println!("\x1b[1;35mWelcome to Yuuri, Raidlords Bot\x1b[0m");
+    println!("\x1b[1;35mWelcome to Yuuri, RaidLords\x1b[0m");
     println!("\x1b[1;32mJoin our community: https://t.me/Y3YuYuYo\x1b[0m");
     println!(
         "\x1b[1;33mCurrent time: {}\x1b[0m\n",

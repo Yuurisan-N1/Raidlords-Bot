@@ -254,6 +254,8 @@ pub fn explain(e: &Error) -> String {
             }
         }
         Error::Http(msg) => sanitize(msg),
+        Error::Denied => "the session is no longer accepted".to_string(),
+        Error::Banned => "the account is banned".to_string(),
         other => reason(&other.to_string()).to_string(),
     }
 }
