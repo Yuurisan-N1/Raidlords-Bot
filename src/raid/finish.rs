@@ -16,7 +16,7 @@ pub fn raid_attack(api: &Api, destruction: f64, army: &Value) -> Result<Value> {
 
 pub fn battle_finish(api: &Api, battle: Value, log: Value, hash: Value) -> Result<Value> {
     api.battle_finish(json!({
-        "battle": battle,
+        "battle_id": battle,
         "log": log,
         "hash": hash,
     }))
