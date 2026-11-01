@@ -11,6 +11,13 @@ pub struct Biaya {
     pub cost: u64,
     pub secs: u64,
     pub gate: i64,
+    pub cap: u64,
+}
+
+#[derive(Debug, Clone, Default, PartialEq, Eq)]
+pub struct Troop {
+    pub housing: u64,
+    pub barracks: i64,
 }
 
 impl Biaya {
@@ -36,12 +43,18 @@ impl Biaya {
             .and_then(|v| v.as_i64())
             .or_else(|| item.get("th_req").and_then(|v| v.as_i64()))
             .unwrap_or(0);
+        let cap = item
+            .get("cap")
+            .and_then(|v| v.as_f64())
+            .unwrap_or(0.0)
+            .max(0.0) as u64;
         Some(Biaya {
             level,
             res,
             cost,
             secs,
             gate,
+            cap,
         })
     }
 }
@@ -52,7 +65,10 @@ pub struct Katalog {
     obstacles: HashMap<String, Biaya>,
     research: HashMap<String, Vec<Biaya>>,
     heroes: HashMap<String, Vec<Biaya>>,
+    troops: HashMap<String, Troop>,
     search: Vec<u64>,
+    path_fix_from: Option<u64>,
+    air_fix_from: Option<u64>,
 }
 
 impl Katalog {
@@ -91,7 +107,16 @@ impl Katalog {
             obstacles,
             research: read_steps(raw.get("research"), "lab")?,
             heroes: read_steps(raw.get("heroes"), "hall")?,
+            troops: read_troops(raw.get("troops")),
             search,
+            path_fix_from: raw
+                .get("sim")
+                .and_then(|v| v.get("path_fix_from_id"))
+                .and_then(|v| v.as_u64()),
+            air_fix_from: raw
+                .get("sim")
+                .and_then(|v| v.get("air_fix_from_id"))
+                .and_then(|v| v.as_u64()),
         })
     }
 
@@ -138,6 +163,14 @@ impl Katalog {
         steps.iter().min_by_key(|step| step.cost).cloned()
     }
 
+    pub fn path_fix_from(&self) -> Option<u64> {
+        self.path_fix_from
+    }
+
+    pub fn air_fix_from(&self) -> Option<u64> {
+        self.air_fix_from
+    }
+
     pub fn search_cost(&self, town_hall: u64) -> u64 {
         if self.search.is_empty() {
             return 0;
@@ -148,6 +181,59 @@ impl Katalog {
             .copied()
             .unwrap_or_else(|| *self.search.last().unwrap_or(&0))
     }
+
+    pub fn camp_cap(&self, level: i64) -> u64 {
+        self.step("army_camp", level)
+            .map(|step| step.cap)
+            .unwrap_or(0)
+    }
+
+    pub fn troop_housing(&self, kind: &str) -> Option<u64> {
+        let troop = self.troops.get(kind)?;
+        if troop.housing == 0 {
+            return None;
+        }
+        Some(troop.housing)
+    }
+
+    pub fn newest_troop(&self, barracks: i64) -> Option<String> {
+        self.troops
+            .iter()
+            .filter(|(_, troop)| troop.barracks <= barracks)
+            .min_by(|a, b| {
+                b.1.barracks
+                    .cmp(&a.1.barracks)
+                    .then_with(|| a.1.housing.cmp(&b.1.housing))
+                    .then_with(|| a.0.cmp(b.0))
+            })
+            .map(|(kind, _)| kind.clone())
+    }
+}
+
+fn read_troops(source: Option<&Value>) -> HashMap<String, Troop> {
+    let mut out = HashMap::new();
+    let map = match source {
+        Some(Value::Object(map)) => map,
+        _ => return out,
+    };
+
+    for (kind, item) in map {
+        if item.get("role").and_then(|v| v.as_str()) != Some("troop") {
+            continue;
+        }
+        let housing = item
+            .get("housing")
+            .and_then(|v| v.as_f64())
+            .unwrap_or(0.0)
+            .max(0.0) as u64;
+        if housing == 0 {
+            continue;
+        }
+        let barracks = item.get("barracks").and_then(|v| v.as_i64()).unwrap_or(1);
+        out.insert(kind.clone(), Troop { housing, barracks });
+    }
+
+    out
 }
 
 fn read_steps(source: Option<&Value>, gate_key: &str) -> Result<HashMap<String, Vec<Biaya>>> {
