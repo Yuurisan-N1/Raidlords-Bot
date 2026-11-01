@@ -16,7 +16,7 @@ pub fn ready(reply: &Value) -> bool {
     match reply {
         Value::Array(items) => items.iter().any(ready),
         Value::Object(map) => {
-            if is_ready(map) {
+            if is_ready(reply) {
                 return true;
             }
             map.values().any(ready)

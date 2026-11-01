@@ -78,7 +78,7 @@ fn walk(value: &Value, out: &mut Vec<String>) {
             }
         }
         Value::Object(map) => {
-            if is_ready(map) {
+            if is_ready(value) {
                 if let Some(id) = map.get("id").or_else(|| map.get("key")) {
                     let label = id
                         .as_str()
