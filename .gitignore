@@ -4,7 +4,6 @@
 /device.json
 *.log
 *.zip
-src/net/client.rs
 src/raid/siege.rs
 src/run/plan.rs
 src/state/snapshot.rs
